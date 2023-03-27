@@ -38,8 +38,9 @@ app.MapGet("/ratio/{value}", async (RatioDb ratioDb, [FromRoute] decimal value) 
     return await ratioDb.Ratios
         .FirstOrDefaultAsync(ratio =>
             ratio.LowerBound <= value && 
-            ratio.UpperBound >= value); 
-});
+            ratio.UpperBound >= value);})
+.WithName("Find Ratio")
+.WithDescription("Finds the Ratio for given values");
 
 app.Run("http://+:4000");
 
