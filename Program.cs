@@ -42,7 +42,7 @@ app.MapGet("/ratio/{value}", async (RatioDb ratioDb, [FromRoute] decimal value) 
 .WithName("Find Ratio")
 .WithDescription("Finds the Ratio for given values");
 
-app.Run("http://+:4000");
+app.Run();
 
 //Seed Data
 static void SeedData(RatioDb dbContext)
