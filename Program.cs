@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MinApiDemo.Models;
 using MinApiDemo.Repository;
+using MinApiDemo.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<RatioDb>(opt =>
     opt.UseInMemoryDatabase("ratiodb"));
+
+builder.Services.AddScoped<BussinesLogic>();
 
 var app = builder.Build();
 
@@ -34,11 +37,8 @@ app.MapGet("/ratio", async (RatioDb ratioDb) => {
     return await ratioDb.Ratios.ToListAsync();
 });
 
-app.MapGet("/ratio/{value}", async (RatioDb ratioDb, [FromRoute] decimal value) => {
-    return await ratioDb.Ratios
-        .FirstOrDefaultAsync(ratio =>
-            ratio.LowerBound <= value && 
-            ratio.UpperBound >= value);})
+app.MapGet("/ratio/{value}", async ([FromServices] BussinesLogic bussinesLogic, [FromRoute] decimal value) 
+    => {return await bussinesLogic.GetRatio(value);})
 .WithName("Find Ratio")
 .WithDescription("Finds the Ratio for given values");
 
