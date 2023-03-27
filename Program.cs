@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MinApiDemo.Models;
 using MinApiDemo.Repository;
@@ -29,12 +30,18 @@ app.MapGet("/", () =>
 app.MapGet("/home", () => 
     "Welcome to my SK presentation!");
 
-app.MapGet("/Ratio", async (RatioDb ratioDb) => {
+app.MapGet("/ratio", async (RatioDb ratioDb) => {
     return await ratioDb.Ratios.ToListAsync();
 });
 
-app.Run("http://+:4000");
+app.MapGet("/ratio/{value}", async (RatioDb ratioDb, [FromRoute] decimal value) => {
+    return await ratioDb.Ratios
+        .FirstOrDefaultAsync(ratio =>
+            ratio.LowerBound <= value && 
+            ratio.UpperBound >= value); 
+});
 
+app.Run("http://+:4000");
 
 //Seed Data
 static void SeedData(RatioDb dbContext)
